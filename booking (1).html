@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ฟอร์มใบเสนอราคาบ้านพัก</title>
+  <style>
+    body { font-family: 'Prompt', sans-serif; padding: 20px; background: #f9f9f9; }
+    h2 { color: #333; }
+    label { display: block; margin-top: 10px; }
+    input, select, textarea, button { width: 100%; padding: 10px; margin-top: 5px; }
+    button { background: teal; color: white; border: none; margin-top: 15px; }
+    #output { white-space: pre-line; background: #fff; padding: 20px; margin-top: 20px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h2>ฟอร์มสร้างใบเสนอราคาบ้านพัก</h2>
+  <label>เลขที่การจอง</label>
+  <input id="bookingCode" placeholder="เช่น BsLg14มิย"/>
+
+  <label>ชื่อบ้าน</label>
+  <input id="villaName" placeholder="เช่น Blue Sky"/>
+
+  <label>ชื่อผู้จอง</label>
+  <input id="name" placeholder="เช่น คุณสมชาย"/>
+
+  <label>เบอร์โทร</label>
+  <input id="phone"/>
+
+  <label>จำนวนผู้ใหญ่</label>
+  <input type="number" id="adults"/>
+
+  <label>จำนวนเด็ก</label>
+  <input type="number" id="kids"/>
+
+  <label>Check in</label>
+  <input id="checkin" type="date"/>
+
+  <label>Check out</label>
+  <input id="checkout" type="date"/>
+
+  <label><input type="checkbox" id="breakfast"/> เพิ่มอาหารเช้า (+1,000 บาท/วัน)</label>
+
+  <label>ชำระมัดจำแล้ว (บาท)</label>
+  <input id="deposit" placeholder="เช่น 9000"/>
+
+  <button onclick="generateQuote()">สร้างใบเสนอราคา</button>
+  <button onclick="copyOutput()">คัดลอกข้อความ</button>
+
+  <div id="output">ผลลัพธ์ใบเสนอราคาจะแสดงที่นี่...</div>
+
+  <script>
+    function calculateNights(start, end) {
+      const inDate = new Date(start);
+      const outDate = new Date(end);
+      const diffTime = outDate - inDate;
+      const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return days > 0 ? days : 1;
+    }
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      const month = d.toLocaleDateString("th-TH", { month: 'short' });
+      const day = d.getDate();
+      const year = d.getFullYear() + 543;
+      return `${day}${month}${year}`;
+    }
+
+    function generateQuote() {
+      const code = document.getElementById("bookingCode").value;
+      const villa = document.getElementById("villaName").value;
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const adults = parseInt(document.getElementById("adults").value || 0);
+      const kids = parseInt(document.getElementById("kids").value || 0);
+      const checkin = document.getElementById("checkin").value;
+      const checkout = document.getElementById("checkout").value;
+      const breakfast = document.getElementById("breakfast").checked;
+      const deposit = parseInt(document.getElementById("deposit").value || 0);
+      const nights = calculateNights(checkin, checkout);
+
+      const totalPeople = adults + kids;
+      const overPeople = Math.max(0, totalPeople - 16);
+      const overCharge = overPeople * 500 * nights;
+      const housePrice = 19900 * nights;  // ปรับตามหลังที่เลือกได้ภายหลัง
+      const bfPrice = breakfast ? 1000 * nights : 0;
+      const all = housePrice + overCharge + bfPrice;
+      const remain = all - deposit;
+      const final = remain + 3000;
+
+      const out = `ใบเสนอการจอง The Sky Exclusive Villa
+
+เลขที่การจอง : ${code}
+บ้าน  : ${villa}
+ชื่อ   :  ${name}
+โทร : ${phone}
+จำนวน : ผู้ใหญ่ ${adults} ท่านและเด็ก ${kids} ท่าน
+ฟรี เด็ก 3 ท่าน
+
+🛌 ท่านที่ 1-30 เพิ่มหรือลดท่านละ 500 บาท ต่อ 1 วัน
+
+Check in วันที่ ${formatDate(checkin)}
+⏰️ เวลา 14.00 น.
+Check out วันที่ ${formatDate(checkout)}
+⏰️ เวลา 11.30 น.
+รวมระยะเวลา : ${nights} วัน ${nights - 1} คืน
+
+🏖 สรุปค่าที่พัก 🏖
+1. ค่าที่พัก ${villa}
+ราคา ${housePrice.toLocaleString()} บาท
+
+คนเกินคิดเพิ่ม ${overCharge.toLocaleString()} บาท
+อาหารเช้า ${bfPrice.toLocaleString()} บาท
+
+รวมทั้งหมด = ${all.toLocaleString()} บาท
+
+💵 ชำระมัดจำแล้ว ${deposit.toLocaleString()} บาท
+คงเหลือ ${remain.toLocaleString()} บาท
+
+2. ค่าประกันบ้าน 3,000 บาท
+🌈 ยอดคงเหลือชำระรวม ${final.toLocaleString()} บาท
+
+#ค่าประกันบ้านได้รับคืนในวัน Check out`;
+
+      document.getElementById("output").innerText = out;
+    }
+
+    function copyOutput() {
+      const out = document.getElementById("output").innerText;
+      navigator.clipboard.writeText(out).then(() => {
+        alert("คัดลอกข้อความเรียบร้อยแล้ว!");
+      });
+    }
+  </script>
+</body>
+</html>
