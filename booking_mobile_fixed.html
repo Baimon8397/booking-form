@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ฟอร์มใบเสนอราคา</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+        select, input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        #output {
+            white-space: pre-wrap;
+            background: #f0f0f0;
+            padding: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>ฟอร์มใบเสนอราคา</h2>
+
+    <label for="houseName">ชื่อบ้าน</label>
+    <select id="houseName">
+        <option value="" disabled selected>เลือกบ้าน</option>
+        <option value="Blue Sky">Blue Sky</option>
+        <option value="Lagoon">Lagoon</option>
+        <option value="Let's Sea">Let's Sea</option>
+        <option value="Infinity">Infinity</option>
+        <option value="Garden View">Garden View</option>
+        <option value="On the Beach">On the Beach</option>
+        <option value="Sea Beach Front">Sea Beach Front</option>
+    </select>
+
+    <label for="checkIn">วันที่เช็คอิน</label>
+    <input type="date" id="checkIn" />
+
+    <label for="checkOut">วันที่เช็คเอาท์</label>
+    <input type="date" id="checkOut" />
+
+    <label for="guestCount">จำนวนผู้เข้าพัก</label>
+    <input type="number" id="guestCount" min="1" />
+
+    <button onclick="generateQuote()">สร้างใบเสนอราคา</button>
+
+    <div id="output"></div>
+
+    <script>
+        function generateQuote() {
+            const houseName = document.getElementById("houseName").value;
+            const checkIn = document.getElementById("checkIn").value;
+            const checkOut = document.getElementById("checkOut").value;
+            const guestCount = document.getElementById("guestCount").value;
+
+            let output = "📌 ใบเสนอราคาการเข้าพัก
+";
+            output += `🏡 บ้านพัก: ${houseName}
+`;
+            output += `📅 เช็คอิน: ${checkIn}
+`;
+            output += `📅 เช็คเอาท์: ${checkOut}
+`;
+            output += `👤 จำนวนผู้เข้าพัก: ${guestCount} คน
+`;
+            output += `
+💬 กรุณาตรวจสอบรายละเอียดก่อนยืนยันการจอง`;
+
+            document.getElementById("output").innerText = output;
+        }
+    </script>
+</body>
+</html>
